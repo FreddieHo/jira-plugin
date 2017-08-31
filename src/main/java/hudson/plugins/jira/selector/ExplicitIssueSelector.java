@@ -62,20 +62,23 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
 
     @Override
     public Set<String> findIssueIds(Run<?, ?> run, JiraSite site, TaskListener listener) {
-        List<String> expandedJiraIssueKeys = Collections.<String>emptyList();
+        if (   StringUtils.isBlank(issueKeys)
+	    || run == null 
+	    || listener == null) {
+	    return Sets.newHashSet(jiraIssueKeys);
+	}
+        
+	List<String> expandedJiraIssueKeys = Collections.<String>emptyList();
         String expandedIssueKeys = issueKeys;
-        if (   StringUtils.isNotBlank(issueKeys)
-	    && run != null 
-	    && listener != null) {
-            try {
-                expandedIssueKeys = run.getEnvironment(listener).expand(issueKeys);
-            } catch (IOException|InterruptedException e) {
-                e.printStackTrace(listener.getLogger());
-            }
-            expandedJiraIssueKeys = Lists.newArrayList(expandedIssueKeys.split(","));
+        
+	try {
+            expandedIssueKeys = run.getEnvironment(listener).expand(issueKeys);
+        } catch (IOException|InterruptedException e) {
+            e.printStackTrace(listener.getLogger());
         }
- 
-        return Sets.newHashSet(expandedJiraIssueKeys);
+        expandedJiraIssueKeys = Lists.newArrayList(expandedIssueKeys.split(","));
+
+	return Sets.newHashSet(expandedJiraIssueKeys);
     }
 
     @Extension
