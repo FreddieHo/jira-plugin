@@ -29,18 +29,8 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
 
     @DataBoundConstructor
     public ExplicitIssueSelector(String issueKeys) {
-        String expandedIssueKeys = issueKeys;
-        try
-        {
-            expandedIssueKeys = build.getEnvironment(listener).expand(issueKeys);
-        }
-        catch (IOException|InterruptedException e)
-        {
-            e.printStackTrace(listener.getLogger());
-        }
-
-        this.jiraIssueKeys = StringUtils.isNotBlank(expandedIssueKeys) ? Lists.newArrayList(expandedIssueKeys.split(",")) : Collections.<String>emptyList();
-        this.issueKeys = expandedIssueKeys;
+        this.jiraIssueKeys = StringUtils.isNotBlank(issueKeys) ? Lists.newArrayList(issueKeys.split(",")) : Collections.<String>emptyList();
+        this.issueKeys = issueKeys;
     }
 
     public ExplicitIssueSelector(List<String> jiraIssueKeys) {
@@ -52,18 +42,8 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
     }
 
     public void setIssueKeys(String issueKeys){
-        String expandedIssueKeys = issueKeys;
-        try
-        {
-            expandedIssueKeys = build.getEnvironment(listener).expand(issueKeys);
-        }
-        catch (IOException|InterruptedException e)
-        {
-            e.printStackTrace(listener.getLogger());
-        }
-
-        this.jiraIssueKeys = StringUtils.isNotBlank(expandedIssueKeys) ? Lists.newArrayList(expandedIssueKeys.split(",")) : Collections.<String>emptyList();
-        this.issueKeys = expandedIssueKeys;
+        this.jiraIssueKeys = StringUtils.isNotBlank(issueKeys) ? Lists.newArrayList(issueKeys.split(",")) : Collections.<String>emptyList();
+        this.issueKeys = issueKeys;
     }
 
     public String getIssueKeys(){
@@ -72,7 +52,20 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
 
     @Override
     public Set<String> findIssueIds(Run<?, ?> run, JiraSite site, TaskListener listener) {
-        return Sets.newHashSet(jiraIssueKeys);
+        List<String> expandedJiraIssueKeys;
+        String expandedIssueKeys = issueKeys;
+        try
+        {
+            expandedIssueKeys = run.getEnvironment(listener).expand(issueKeys);
+        }
+        catch (IOException|InterruptedException e)
+        {
+            e.printStackTrace(listener.getLogger());
+        }
+
+        expandedJiraIssueKeys = StringUtils.isNotBlank(expandedIssueKeys) ? Lists.newArrayList(expandedIssueKeys.split(",")) : Collections.<String>emptyList();
+ 
+        return Sets.newHashSet(expandedJiraIssueKeys);
     }
 
     @Extension
