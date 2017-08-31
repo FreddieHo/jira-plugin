@@ -66,7 +66,7 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
         String expandedIssueKeys = issueKeys;
         if (   StringUtils.isNotBlank(issueKeys)
 	    && run != null 
-	    && listner != null) {
+	    && listener != null) {
             try {
                 expandedIssueKeys = run.getEnvironment(listener).expand(issueKeys);
             } catch (IOException|InterruptedException e) {
