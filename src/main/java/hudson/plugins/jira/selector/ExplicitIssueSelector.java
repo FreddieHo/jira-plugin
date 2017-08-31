@@ -38,8 +38,12 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
     }
 
     public ExplicitIssueSelector(List<String> jiraIssueKeys) {
-        issueKeys = jiraIssueKeys.toString();
-        issueKeys.replaceAll("\\[|\\]", "").replaceAll(", ",",");
+        if (jiraIssueKeys.size() > 0) {
+            issueKeys = jiraIssueKeys.get(0);
+            for (int i = 1; i < jiraIssueKeys.size(); i++) {
+			    issueKeys += "," + jiraIssueKeys.get(i));
+		    }
+        }
         this.jiraIssueKeys = jiraIssueKeys;
     }
 
@@ -60,7 +64,7 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
     public Set<String> findIssueIds(Run<?, ?> run, JiraSite site, TaskListener listener) {
         List<String> expandedJiraIssueKeys = Collections.<String>emptyList();
         String expandedIssueKeys = issueKeys;
-        if (StringUtils.isNotBlank(expandedIssueKeys)) {
+        if (StringUtils.isNotBlank(issueKeys)) {
             try
             {
                 expandedIssueKeys = run.getEnvironment(listener).expand(issueKeys);
