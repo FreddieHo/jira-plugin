@@ -41,7 +41,7 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
         if (jiraIssueKeys.size() > 0) {
             issueKeys = jiraIssueKeys.get(0);
             for (int i = 1; i < jiraIssueKeys.size(); i++) {
-			    issueKeys += "," + jiraIssueKeys.get(i));
+			    issueKeys += "," + jiraIssueKeys.get(i);
 		    }
         }
         this.jiraIssueKeys = jiraIssueKeys;
