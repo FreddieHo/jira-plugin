@@ -38,6 +38,8 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
     }
 
     public ExplicitIssueSelector(List<String> jiraIssueKeys) {
+        issueKeys = jiraIssueKeys.toString();
+        issueKeys.replaceAll("\\[|\\]", "").replaceAll(", ",",");
         this.jiraIssueKeys = jiraIssueKeys;
     }
 
