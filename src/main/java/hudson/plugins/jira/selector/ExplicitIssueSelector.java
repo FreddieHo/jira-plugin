@@ -8,6 +8,8 @@ import javax.annotation.CheckForNull;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 import hudson.plugins.jira.Messages;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -27,8 +29,18 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
 
     @DataBoundConstructor
     public ExplicitIssueSelector(String issueKeys) {
-        this.jiraIssueKeys = StringUtils.isNotBlank(issueKeys) ? Lists.newArrayList(issueKeys.split(",")) : Collections.<String>emptyList();
-        this.issueKeys = issueKeys;
+        String expandedIssueKeys = issueKeys;
+        try
+        {
+            expandedIssueKeys = build.getEnvironment(listener).expand(issueKeys);
+        }
+        catch (IOException|InterruptedException e)
+        {
+            e.printStackTrace(listener.getLogger());
+        }
+
+        this.jiraIssueKeys = StringUtils.isNotBlank(expandedIssueKeys) ? Lists.newArrayList(expandedIssueKeys.split(",")) : Collections.<String>emptyList();
+        this.issueKeys = expandedIssueKeys;
     }
 
     public ExplicitIssueSelector(List<String> jiraIssueKeys) {
@@ -40,8 +52,18 @@ public class ExplicitIssueSelector extends AbstractIssueSelector {
     }
 
     public void setIssueKeys(String issueKeys){
-        this.issueKeys = issueKeys;
-        this.jiraIssueKeys = Lists.newArrayList(issueKeys.split(","));
+        String expandedIssueKeys = issueKeys;
+        try
+        {
+            expandedIssueKeys = build.getEnvironment(listener).expand(issueKeys);
+        }
+        catch (IOException|InterruptedException e)
+        {
+            e.printStackTrace(listener.getLogger());
+        }
+
+        this.jiraIssueKeys = StringUtils.isNotBlank(expandedIssueKeys) ? Lists.newArrayList(expandedIssueKeys.split(",")) : Collections.<String>emptyList();
+        this.issueKeys = expandedIssueKeys;
     }
 
     public String getIssueKeys(){
